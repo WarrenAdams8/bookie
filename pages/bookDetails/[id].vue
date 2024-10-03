@@ -8,10 +8,22 @@
     </template>
 </template>
 <script setup lang="ts">
-const route = useRoute()
+const nuxtApp = useNuxtApp()
+const { id } = useRoute().params
 
 const { data: book, status }: any = await useLazyAsyncData(
-    'bookDetails',
-    () => $fetch(`https://www.googleapis.com/books/v1/volumes/${route.params.id}`)
+    `bookDetails:${id}`,
+    () => $fetch(`https://www.googleapis.com/books/v1/volumes/${id}`), {
+    getCachedData(key) {
+        return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
+    },
+}
 )
+
+
+//implement fetch at TTL logic in types
+
+
+// https://nuxt.com/docs/api/composables/use-nuxt-data
+// https://www.youtube.com/watch?v=mv0WcBABcIk useState instead of pinia
 </script>
